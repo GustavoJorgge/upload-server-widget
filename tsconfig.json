@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 22",
+  "_version": "22.0.0",
+
+  "compilerOptions": {
+    "lib": ["es2024", "ESNext.Array", "ESNext.Collection", "ESNext.Iterator"],
+    "module": "ESNext",
+    "target": "es2022",
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    /*Bundler é para quando publicarmos a aplicação, ela sera convertida em JavaScript*/
+    "moduleResolution": "bundler",
+
+    /*Toda vez que digitar um endereço com @/, tudo depois dele sera enviado para ./src*/
+    "paths":{
+      "@/*":["./src/*"]
+    }
+
+  }
+}

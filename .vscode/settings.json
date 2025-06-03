@@ -1,0 +1,16 @@
+{
+    // Ativa a formatação automática ao salvar arquivos
+    "editor.formatOnSave": true,
+
+    // Configurações específicas para arquivos TypeScript
+    "[typescript]": {
+        // Define o Biome como formatador padrão para arquivos TypeScript
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+
+    // Define ações automáticas ao salvar arquivos
+    "editor.codeActionsOnSave": {
+        // Organiza as importações automaticamente ao salvar
+        "source.organizeImports": "explicit"
+    }
+}
