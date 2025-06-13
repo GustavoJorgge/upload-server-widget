@@ -1,5 +1,8 @@
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
+import { uploads } from './../../db/schemas/uploads';
+import { db } from '@/infra/db';
+import { schema } from '@/infra/db/schemas';
 
 // Define a rota de upload de imagem com validação via Zod
 export const UploadImageRoute: FastifyPluginAsyncZod = async (server) => {
@@ -30,6 +33,12 @@ export const UploadImageRoute: FastifyPluginAsyncZod = async (server) => {
         
         // Função que lida com a requisição
         async (request, reply) => {
+
+            await db.insert(schema.uploads).values({
+                name: 'teste.jpg',
+                remoteKey: 'testes.jpg',
+                remoteUrl: 'http://asdasd.com'
+            })
             return reply.status(201).send({ uploadId: 'teste' }) // Retorna um ID de teste
         }
     )
