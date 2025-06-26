@@ -1,12 +1,13 @@
-import { fastifyCors } from '@fastify/cors' // Plugin para habilitar CORS
-import { fastify } from 'fastify' // Framework Fastify
-import { env } from '@/env' // Importa variáveis de ambiente (se houver)
-import { serializerCompiler, validatorCompiler, hasZodFastifySchemaValidationErrors, jsonSchemaTransform } from 'fastify-type-provider-zod' // Integração do Fastify com Zod para validação
+import { fastifyCors } from '@fastify/cors'; // Plugin para habilitar CORS
+import { fastify } from 'fastify'; // Framework Fastify
+// import { env } from '@/env' // Importa variáveis de ambiente (se houver)
+import { hasZodFastifySchemaValidationErrors, serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod'; // Integração do Fastify com Zod para validação
 
-import { UploadImageRoute } from './routes/upload-image' // Importa rota de upload de imagem
-import fastifyMultipart from '@fastify/multipart'
-import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUi from '@fastify/swagger-ui'
+import { transformSwaggerSchema } from '@/infra/http/transform-swagger-schema';
+import fastifyMultipart from '@fastify/multipart';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
+import { uploadImageRoute } from './routes/upload-image'; // Importa rota de upload de imagem
 
 const server = fastify() // Cria instância do servidor Fastify
 
@@ -34,8 +35,8 @@ server.setErrorHandler((error, request, reply) => {
 // Habilita CORS para todas as origens (útil para testes e frontends externos)
 server.register(fastifyCors, { origin: '*' })
 
-
 server.register(fastifyMultipart)
+
 server.register(fastifySwagger, {
   openapi: {
     info: {
@@ -43,14 +44,8 @@ server.register(fastifySwagger, {
       description: 'teste docs',
       version: '1.0.0',
     },
-    servers:[
-      {
-        url: 'http://localhost:3333',
-        description: 'servidor de desenvolvimento'
-      }
-    ]
   },
-  transform: jsonSchemaTransform,
+  transform: transformSwaggerSchema,
 })
 
 server.register(fastifySwaggerUi, {
@@ -59,7 +54,7 @@ server.register(fastifySwaggerUi, {
 
 
 // Registra a rota de upload de imagem no servidor
-server.register(UploadImageRoute)
+server.register(uploadImageRoute)
 
 // Inicia o servidor na porta 3333 e aceita conexões externas (host 0.0.0.0)
 server.listen({ port: 3333, host: '0.0.0.0' }).then(() => {
