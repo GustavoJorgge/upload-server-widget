@@ -11,6 +11,7 @@ import { transformSwaggerSchema } from "@/infra/http/transform-swagger-schema";
 import fastifyMultipart from "@fastify/multipart";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
+import { exportUploadsRoute } from "./routes/export-uploads";
 import { getUploadsRoute } from "./routes/get-uploads";
 import { uploadImageRoute } from "./routes/upload-image"; // Importa rota de upload de imagem
 
@@ -60,6 +61,7 @@ server.register(fastifySwaggerUi, {
 // Registra a rota de upload de imagem no servidor
 server.register(uploadImageRoute);
 server.register(getUploadsRoute);
+server.register(exportUploadsRoute);
 
 // Inicia o servidor na porta 3333 e aceita conexões externas (host 0.0.0.0)
 server.listen({ port: 3333, host: "0.0.0.0" }).then(() => {
