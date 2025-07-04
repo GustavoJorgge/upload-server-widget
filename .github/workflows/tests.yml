@@ -1,0 +1,56 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+jobs:
+  run-ci:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: docker
+          POSTGRES_PASSWORD: docker
+          POSTGRES_DB: upload_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create test environment file
+        run: |
+          echo "PORT=3333" > .env.test
+          echo "NODE_ENV=test" >> .env.test
+          echo "DATABASE_URL=postgresql://docker:docker@localhost:5432/upload_test" >> .env.test
+          echo "CLOUDFLARE_ACCOUNT_ID=" >> .env.test
+          echo "CLOUDFLARE_ACESS_KEY_ID=" >> .env.test
+          echo "CLOUDFLARE_SECRET_ACESS_KEY=" >> .env.test
+          echo "CLOUDFLARE_BUCKET=upload-server" >> .env.test
+          echo "CLOUDFLARE_PUBLIC_URL=https://pub-8ac1dc086d8a4c4ab9f89e1c28ddb9b3.r2.dev" >> .env.test
+
+      - name: Run database migrations
+        run: npm run db:migrate:test
+
+      - name: Run E2E tests
+        run: npm run test
